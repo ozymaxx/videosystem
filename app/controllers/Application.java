@@ -26,23 +26,29 @@ public class Application extends Controller {
 		}
 	}
 	
-	public static Result mainMenu() {
-		return ok( mainMenu.render() );
-	}
-	
 	public static Result authenticate() {
 		Form<UserLogin> loginForm = form( UserLogin.class).bindFromRequest();
-		if ( loginForm.hasErrors() ) {
+		UserLogin op = new UserLogin();
+		op.nick = loginForm.field( "nick").value();
+		op.pwd = loginForm.field( "pwd").value();
+		System.out.println(  );
+		if ( op.validate() == null ) {
+			session().clear();
+			session().put( "nickName", loginForm.field( "nick").value() );
+			return redirect( routes.Application.mainMenu() );
+		}
+		else if ( loginForm.hasErrors() ) {
 			return badRequest( login.render( loginForm) );
 		}
 		else {
-			return ok( index.render( "S.A.") );
-			/*
 			session().clear();
-			session( "nickName", loginForm.get().nick);
+			session().put( "nickName", loginForm.field( "nick").value() );
 			return redirect( routes.Application.mainMenu() );
-			*/
 		}
+	}
+	
+	public static Result mainMenu() {
+		return ok( mainMenu.render() );
 	}
 	
 	public static Result registerMenu() {
@@ -69,16 +75,12 @@ public class Application extends Controller {
 		public String pwd;
 		
 		public String validate() {
-			System.out.println( nick + "-" + pwd);
-			return null;
-			/*
 			if ( User.auth( nick, pwd) ) {
 				return null;
 			}
 			else {
-				return "Invalid user or password!";
+				return "Invalid nick name or password!";
 			}
-			*/
 		}
 	}
 	
