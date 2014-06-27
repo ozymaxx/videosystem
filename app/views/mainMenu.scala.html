@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href="res/css/bootstrap.min.css" media="screen" />
+		<script src="res/js/jquery.js"></script>
+		<script src="res/js/bootstrap.min.js"></script>
+		<title>Log In</title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#video-system-navbar-display">
+					<span class="sr-only">Toggle navigation</span>
+				</button>
+				<a class="navbar-brand" href="#">Videosystem</a>
+			</div>
+			<div class="collapse navbar-collapse" id="video-system-navbar-display">
+				<ul class="nav navbar-nav">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">See Users</a></li>
+							<li><a href="#">See All Videos</a></li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Me <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">See My Profile</a></li>
+							<li><a href="#">See My Videos</a></li>
+						</ul>
+					</li>
+					<li><a href="#" data-toggle="modal" data-target="#video-upload">Upload Video...</a></li>
+				</ul>
+				<form class="navbar-form navbar-right" role="search">
+					<div class="form-group">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Enter search keywords..." />
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-primary">Go</button>
+							</span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="modal fade" id="video-upload" role="dialog" aria-labelledby="video-upload-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: black;">&times;</button>
+						<h4 class="modal-title" id="video-upload-label">Upload Video...</h4>
+					</div>
+					<div class="modal-body">
+						<input type="file" /><br />
+						<input type="text" class="form-control" placeholder="Enter a name..." /><br />
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span>&nbsp;Upload</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<ul class="media-list">
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<ul class="media-list">
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<ul class="media-list">
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+				<li class="media">
+					<a class="pull-left" href="#">
+						<img class="media-object" src="res/index.svg" alt="..." />
+					</a>
+					<div class="media-body">
+						<h4 class="media-heading">Video header</h4>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</html>

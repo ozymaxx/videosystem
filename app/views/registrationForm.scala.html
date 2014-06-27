@@ -1,0 +1,37 @@
+@(form: Form[Application.UserRegistration])
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "stylesheets/bootstrap.min.css")' media="screen" />
+		<script src='@routes.Assets.at( "javascripts/jquery-1.9.0.min.js")'></script>
+		<title>Register</title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<body>
+		<div class="container">
+			@if( form.hasGlobalErrors) {
+				<div class="panel panel-danger" style="width: 400px; margin: auto; margin-top: 200px;">
+				<div class="panel-heading"><span class="glyphicon glyphicon-user"></span>&nbsp;@form.globalError.message</div>
+			}
+			@if( !( form.hasGlobalErrors) ) {
+				<div class="panel panel-primary" style="width: 400px; margin: auto; margin-top: 200px;">
+				<div class="panel-heading"><span class="glyphicon glyphicon-user"></span>&nbsp;Registration</div>
+			}
+				<div class="panel-body">
+					@helper.form( routes.Application.registerUser) {
+						<form>
+							<div class="alert alert-info">When your registration is successful, you will be redirected to the login page.</div>
+							<input type="text" name ="nickName" class="form-control" placeholder="nick_name" /><br />
+							<input type="text" name="name" class="form-control" placeholder="Name" /><br />
+							<input type="password" name="pwd1" class="form-control" placeholder="Password" /><br />
+							<input type="password" name="pwd2" class="form-control" placeholder="Password (type again)" /><br />
+							<button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+							<a class="btn btn-link" href="login">Log In</a>
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
