@@ -30,6 +30,16 @@ public class Application extends Controller {
 		}
 	}
 	
+	public static Result logout() {
+		if ( session().containsKey( "nickName") ) {
+			session().clear();
+			return redirect( routes.Application.login() );
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
 	public static Result authenticate() {
 		Form<UserLogin> loginForm = form( UserLogin.class).bindFromRequest();
 		UserLogin op = new UserLogin();
