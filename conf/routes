@@ -12,7 +12,7 @@ GET		/login						controllers.Application.login()
 POST 	/login						controllers.Application.authenticate()
 
 GET		/main/:error				controllers.Application.mainMenu( error: String)
-GET		/main						controllers.Application.mainMenu( null)
+GET		/main						controllers.Application.mainMenuX()
 POST 	/main						controllers.Application.addVideo()
 
 GET 	/watch/:id					controllers.Application.watchVideo( id: String)
