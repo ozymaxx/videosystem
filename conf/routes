@@ -11,7 +11,11 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET		/login						controllers.Application.login()
 POST 	/login						controllers.Application.authenticate()
 
-GET		/main						controllers.Application.mainMenu()
+GET		/main/:error				controllers.Application.mainMenu( error: String)
+GET		/main						controllers.Application.mainMenu( null)
+POST 	/main						controllers.Application.addVideo()
+
+GET 	/watch/:id					controllers.Application.watchVideo( id: String)
 
 GET		/register					controllers.Application.registerMenu()
 POST	/register					controllers.Application.registerUser()
