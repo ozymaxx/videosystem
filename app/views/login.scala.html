@@ -5,6 +5,7 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "stylesheets/bootstrap.min.css")' media="screen" />
 		<script src='@routes.Assets.at( "javascripts/jquery-1.9.0.min.js")'></script>
+		<script src='@routes.Assets.at( "javascripts/bootstrap.min.js")'></script>
 		<title>Log In</title>
 		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
 	</head>
@@ -21,7 +22,7 @@
 				<div class="panel-body">
 					@helper.form( routes.Application.authenticate) {
 						<form>
-							<input type="text" name="nick" class="form-control" placeholder="nick_name" /><br />
+							<input type="text" name ="nick" class="form-control" placeholder="nick_name" /><br />
 							<input type="password" name="pwd" class="form-control" placeholder="Password" /><br />
 							<button type="submit" class="btn btn-primary btn-lg btn-block">Log In</button>
 							<a class="btn btn-link" href="register">Register</a>
