@@ -5,7 +5,10 @@ import play.modules.mongodb.jackson.MongoDB;
 import net.vz.mongodb.jackson.JacksonDBCollection;
 import net.vz.mongodb.jackson.Id;
 import net.vz.mongodb.jackson.ObjectId;
+import net.vz.mongodb.jackson.WriteResult;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.mongodb.BasicDBObject;
 
 import javax.persistence.*;
 
@@ -30,9 +33,23 @@ public class Video {
 		return Video.collection.find().toArray();
 	}
 	
-	public static List<Video> findBetween( int start, int end) {
-		List<Video> allVideos = all();
-		List<Video> results = new ArrayList<Video>();
+	public static List<Video> all( User publisher) {
+		BasicDBObject query = new BasicDBObject( "publisher", publisher);
+		return Video.collection.find( query).toArray();
+	}
+	
+	public static List<Video> findBetween( int start, int end, User publisher) {
+		List<Video> results;
+		List<Video> allVideos;
+		
+		if ( publisher == null) {
+			allVideos = all();
+		}
+		else {
+			allVideos = all( publisher);
+		}
+		
+		results = new ArrayList<Video>();
 		int x = 0;
 		for ( Video video : allVideos) {
 			if ( x >= start && x <= end) {
@@ -44,14 +61,24 @@ public class Video {
 	}
 	
 	public static String create( Video video) {
-		Video.collection.save( video);
-		return video.id;
+		if ( video.header.length() == 0) {
+			return null;
+		}
+		else {
+			WriteResult<Video, String> result = Video.collection.insert( video);
+			return result.getSavedId();
+		}
 	}
 	
 	public static String create( String header, User publisher) {
-		Video video = new Video( header, publisher);
-		Video.collection.save( video);
-		return video.id;
+		if ( header.length() == 0) {
+			return null;
+		}
+		else {
+			Video video = new Video( header, publisher);
+			WriteResult<Video, String> result = Video.collection.insert( video);
+			return result.getSavedId();
+		}
 	}
 	
 	public static void delete( String id) {
