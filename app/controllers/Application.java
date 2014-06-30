@@ -23,7 +23,7 @@ public class Application extends Controller {
     
     public static Result login() {
 		if ( session().containsKey( "nickName") ) {
-			return redirect( routes.Application.mainMenu( null) );
+			return redirect( routes.Application.mainMenuX() );
 		}
 		else {
 			return ok( login.render( form( UserLogin.class) ) );
@@ -38,7 +38,7 @@ public class Application extends Controller {
 		if ( op.validate() == null ) {
 			session().clear();
 			session().put( "nickName", loginForm.field( "nick").value() );
-			return redirect( routes.Application.mainMenu( null) );
+			return redirect( routes.Application.mainMenuX() );
 		}
 		else if ( loginForm.hasErrors() ) {
 			return badRequest( login.render( loginForm) );
@@ -46,20 +46,19 @@ public class Application extends Controller {
 		else {
 			session().clear();
 			session().put( "nickName", loginForm.field( "nick").value() );
-			return redirect( routes.Application.mainMenu( null) );
+			return redirect( routes.Application.mainMenuX() );
 		}
 	}
 	
 	public static Result watchVideo( String id) {
-		return redirect( routes.Application.mainMenu( null) );
+		return redirect( routes.Application.mainMenuX() );
 	}
 	
 	public static Result search() {
-		return redirect( routes.Application.mainMenu( null) );
+		return redirect( routes.Application.mainMenuX() );
 	}
 	
-	/*
-	public static Result mainMenu() {
+	public static Result mainMenuX() {
 		if ( session().containsKey( "nickName") ) {
 			User fetched = User.fetchUser( session().get( "nickName") );
 			return ok( mainMenu.render( fetched, Video.all( fetched), form( VideoUpload.class), new HashMap<String, String>() ) );
@@ -68,7 +67,6 @@ public class Application extends Controller {
 			return redirect( routes.Application.login() );
 		}
 	}
-	*/
 	
 	public static Result mainMenu( String error) {
 		if ( session().containsKey( "nickName") ) {
@@ -76,8 +74,8 @@ public class Application extends Controller {
 			HashMap<String, String> messages = new HashMap<String, String>();
 			String[] errors = { "Video is successfully uploaded!", "Error saving content, please contact the admin.", "The file is not available!"};
 			if ( error != null) {
-				if ( error.substring( 0,5).equals( "error") ) {
-					if ( error.length() == 6) {
+				if ( error.length() == 6 ) {
+					if ( error.substring( 0,5).equals( "error")) {
 						messages.put( "uploadError", errors[ Integer.parseInt( error.substring(5) ) - 1 ]);
 					}
 				}
@@ -128,7 +126,7 @@ public class Application extends Controller {
 	
 	public static Result registerMenu() {
 		if ( session().containsKey( "nickName") ) {
-			return redirect( routes.Application.mainMenu( null) );
+			return redirect( routes.Application.mainMenuX() );
 		}
 		else {
 			return ok( registrationForm.render( form( UserRegistration.class) ) );
