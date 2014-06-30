@@ -76,6 +76,18 @@ public class User {
 		return ( User.collection.find( query).toArray().size() ) == 1;
 	}
 	
+	public static User fetchUser( String nickName) {
+		BasicDBObject query = new BasicDBObject( "nickName", nickName);
+		
+		List<User> result = User.collection.find( query).toArray();
+		if ( result.size() == 1 ) {
+			return result.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+	
 	public static int edit( String id, String name, String nickName, String pwd, String pwd2) {
 		User user = User.collection.findOneById( id);
 		if ( user != null) {
