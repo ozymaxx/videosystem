@@ -17,6 +17,7 @@ public class Video {
 	@ObjectId
 	public String id;
 	public String header;
+	public String ext;
 	public User publisher;
 	
 	private static JacksonDBCollection<Video, String> collection = MongoDB.getCollection( "videos", Video.class, String.class);
@@ -24,9 +25,10 @@ public class Video {
 	public Video() {
 	}
 	
-	public Video( String header, User publisher) {
+	public Video( String header, User publisher, String ext) {
 		this.header = header;
 		this.publisher = publisher;
+		this.ext = ext;
 	}
 	
 	public static List<Video> all() {
@@ -70,28 +72,31 @@ public class Video {
 		}
 	}
 	
-	public static String create( String header, User publisher) {
+	public static String create( String header, User publisher, String extension) {
 		if ( header.length() == 0) {
 			return null;
 		}
 		else {
-			Video video = new Video( header, publisher);
+			Video video = new Video( header, publisher, extension);
 			WriteResult<Video, String> result = Video.collection.insert( video);
 			return result.getSavedId();
 		}
 	}
 	
-	public static void delete( String id) {
+	public static String getExtensionOf( String id) {
 		Video video = Video.collection.findOneById( id);
 		if ( video != null) {
-			Video.collection.remove( video);
+			return video.ext;
+		}
+		else {
+			return null;
 		}
 	}
 	
-	public static boolean edit( String id, String name, User publisher) {
+	public static boolean edit( String id, String name, String ext, User publisher) {
 		Video video = Video.collection.findOneById( id);
 		if ( video != null) {
-			Video updated = new Video( name, publisher);
+			Video updated = new Video( name, publisher, ext);
 			Video.collection.updateById( id, updated);
 			return true;
 		}
@@ -100,7 +105,22 @@ public class Video {
 		}
 	}
 	
+	public static boolean remove( String id, User publisher) {
+		Video check = Video.collection.findOneById( id);
+		if ( !( check.publisher.equals( publisher) ) ) {
+			return false;
+		}
+		else {
+			Video.collection.removeById( id);
+			return true;
+		}
+	}
+	
 	public static void removeAll() {
 		Video.collection.drop();
+	}
+	
+	public boolean equals( Video v) {
+		return publisher.equals( v.publisher) && header.equalsIgnoreCase( v.header);
 	}
 }

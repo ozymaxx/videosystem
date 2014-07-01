@@ -88,20 +88,15 @@ public class User {
 		}
 	}
 	
-	public static int edit( String id, String name, String nickName, String pwd, String pwd2) {
-		User user = User.collection.findOneById( id);
+	public static boolean edit( String name, String nickName, String pwd) {
+		User user = User.collection.find( new BasicDBObject( "nickName", nickName) ).toArray().get(0);
 		if ( user != null) {
-			if ( pwd.equals( pwd2) ) {
-				User updated = new User( name, nickName, pwd);
-				User.collection.updateById( id, updated);
-				return 0;
-			}
-			else {
-				return 1;
-			}
+			User updated = new User( name, nickName, pwd);
+			User.collection.updateById( user.id, updated);
+			return true;
 		}
 		else {
-			return 2;
+			return false;
 		}
 	}
 	
@@ -111,5 +106,9 @@ public class User {
 	
 	public String toString() {
 		return "{\"id\":\"" + id + "\", \"nickName\":\"" + nickName + "\", \"pwd\":\"" + pwd + "\", \"name\":\"" + name + "\"}";
+	}
+	
+	public boolean equals( User u) {
+		return u.nickName.equals( nickName) && u.id.equals( id);
 	}
 }

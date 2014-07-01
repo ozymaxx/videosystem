@@ -17,7 +17,12 @@ GET		/main/:error				controllers.Application.mainMenu( error: String)
 GET		/main						controllers.Application.mainMenuX()
 POST 	/main						controllers.Application.addVideo()
 
+GET		/edit_profile				controllers.Application.editProfile()
+POST	/edit_profile				controllers.Application.commitProfileChanges()
+
 GET 	/watch/:id					controllers.Application.watchVideo( id: String)
+
+GET		/remove/:id					controllers.Application.removeVideo( id: String)
 
 GET		/register					controllers.Application.registerMenu()
 POST	/register					controllers.Application.registerUser()
