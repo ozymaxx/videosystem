@@ -1,0 +1,70 @@
+@( user: User, video: Video, total: Int)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
+		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
+		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
+		<title></title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#video-system-navbar-display">
+					<span class="sr-only">Toggle navigation</span>
+				</button>
+				<a class="navbar-brand" href="main">Videosystem</a>
+			</div>
+			<div class="collapse navbar-collapse" id="video-system-navbar-display">
+				<ul class="nav navbar-nav">
+					@if( user.nickName == "admin") {
+						<li class="dropdown">
+							<a href="" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="admin/users">See Users</a></li>
+								<li><a href="admin/videos">See All Videos</a></li>
+							</ul>
+						</li>
+					}
+					<li class="dropdown">
+						<a href="" class="dropdown-toggle" data-toggle="dropdown">Me <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="edit_profile">Edit My Profile</a></li>
+							<li><a href="main">See My Videos&nbsp;<span class="badge">@total</span></a></li>
+						</ul>
+					</li>
+					<li><a href="/main">Back to Main Menu</a></li>
+					<li><a href="logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Log Out</a></li>
+				</ul>
+				<div class="navbar-form navbar-right" role="search">
+					@helper.form( routes.Application.search) {
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" class="form-control" name="phrase" placeholder="Enter search keywords..." />
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary">Go</button>
+								</span>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		@if( video != null) {
+			<h2>@video.header</h2>
+			<video width="320" height="240" controls>
+				<source src='@routes.Assets.at( "/public", "videos/")@video.id.@video.ext' type="video/@video.ext" />
+				<object data='@routes.Assets.at( "/public", "videos/")@video.id.@video.ext' width="320" height="240">
+					<embed src='@routes.Assets.at( "/public", "videos/")@video.id.@video.ext' width="320" height="240" />
+				</object>
+			</video>
+		}
+		@if( video == null) {
+			<div class="alert alert-danger">This video doesn't exist! <a href="/main">Back to Main Menu</a></div>
+		}
+	</div>
+</html>

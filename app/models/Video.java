@@ -63,6 +63,12 @@ public class Video {
 	}
 	
 	public static String create( Video video) {
+		List<Video> videos = all();
+		if ( videos.size() == 0) {
+			Video.collection.drop();
+			Video.collection.ensureIndex( new BasicDBObject( "header", "text") );
+		}
+		
 		if ( video.header.length() == 0) {
 			return null;
 		}
@@ -73,6 +79,12 @@ public class Video {
 	}
 	
 	public static String create( String header, User publisher, String extension) {
+		List<Video> videos = all();
+		if ( videos.size() == 0) {
+			Video.collection.drop();
+			Video.collection.ensureIndex( new BasicDBObject( "header", "text") );
+		}
+		
 		if ( header.length() == 0) {
 			return null;
 		}
@@ -105,6 +117,12 @@ public class Video {
 		}
 	}
 	
+	public static List<Video> search( String phrase, User publisher) {
+		BasicDBObject query = new BasicDBObject( "$text", new BasicDBObject( "$search", phrase) ).append( "publisher", publisher);
+		List<Video> results = Video.collection.find( query).toArray();
+		return results;
+	}
+	
 	public static boolean remove( String id, User publisher) {
 		Video check = Video.collection.findOneById( id);
 		if ( !( check.publisher.equals( publisher) ) ) {
@@ -112,7 +130,25 @@ public class Video {
 		}
 		else {
 			Video.collection.removeById( id);
+			if ( all().size() == 0) {
+				Video.collection.ensureIndex( new BasicDBObject( "header", "text") );
+			}
 			return true;
+		}
+	}
+	
+	public static Video getVideo( String id, User publisher) {
+		Video check = Video.collection.findOneById( id);
+		if ( check != null) {
+			if ( check.publisher.equals( publisher) ) {
+				return check;
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
 		}
 	}
 	

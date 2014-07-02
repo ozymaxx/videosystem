@@ -13,6 +13,7 @@ import views.html.*;
 import models.*;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.File;
 
 public class Application extends Controller {
@@ -23,7 +24,7 @@ public class Application extends Controller {
     
     public static Result login() {
 		if ( session().containsKey( "nickName") ) {
-			return redirect( routes.Application.mainMenuX() );
+			return redirect( routes.Application.mainMenu() );
 		}
 		else {
 			return ok( login.render( form( UserLogin.class) ) );
@@ -59,7 +60,7 @@ public class Application extends Controller {
 				return badRequest( userEdit.render( user, profileForm, new HashMap<String, String>() ) );
 			}
 			else {
-				return redirect( routes.Application.mainMenuX() );
+				return redirect( routes.Application.mainMenu() );
 			}
 		}
 		else {
@@ -77,7 +78,7 @@ public class Application extends Controller {
 		if ( op.validate() == null ) {
 			session().clear();
 			session().put( "nickName", loginForm.field( "nick").value() );
-			return redirect( routes.Application.mainMenuX() );
+			return redirect( routes.Application.mainMenu() );
 		}
 		else if ( loginForm.hasErrors() ) {
 			return badRequest( login.render( loginForm) );
@@ -85,47 +86,70 @@ public class Application extends Controller {
 		else {
 			session().clear();
 			session().put( "nickName", loginForm.field( "nick").value() );
-			return redirect( routes.Application.mainMenuX() );
+			return redirect( routes.Application.mainMenu() );
 		}
 	}
 	
 	public static Result watchVideo( String id) {
-		return redirect( routes.Application.mainMenuX() );
-	}
-	
-	public static Result search() {
-		return redirect( routes.Application.mainMenuX() );
-	}
-	
-	public static Result mainMenuX() {
 		if ( session().containsKey( "nickName") ) {
-			User fetched = User.fetchUser( session().get( "nickName") );
-			return ok( mainMenu.render( fetched, Video.all( fetched), form( VideoUpload.class), new HashMap<String, String>() ) );
+			User user = User.fetchUser( session().get( "nickName") );
+			Video video = Video.getVideo( id, user);
+			return ok( watchVideo.render( user, video, Video.all( user).size() ) );
 		}
 		else {
 			return redirect( routes.Application.login() );
 		}
 	}
 	
-	public static Result mainMenu( String error) {
+	public static Result searchScreen() {
+		if ( session().containsKey( "nickName") ) {
+			User fetched = User.fetchUser( session().get( "nickName") );
+			return ok( searchScreen.render( fetched, new ArrayList<Video>(), false, form( Search.class) ) );
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result search() {
+		if ( session().containsKey( "nickName") ) {
+			Form<Search> searchForm = form( Search.class).bindFromRequest();
+			
+			User fetched = User.fetchUser( session().get( "nickName") );
+			if ( searchForm.hasErrors() ) {
+				return badRequest( searchScreen.render( fetched, new ArrayList<Video>(), true, searchForm) );
+			}
+			else {
+				return ok( searchScreen.render( fetched, Video.search( searchForm.field( "phrase").value(), fetched ), true, searchForm) );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result mainMenu() {
 		if ( session().containsKey( "nickName") ) {
 			User fetched = User.fetchUser( session().get( "nickName") );
 			HashMap<String, String> messages = new HashMap<String, String>();
 			String[] errors = { "Video is successfully uploaded!", "Error saving content, please contact the admin.", "The file is not available!", "There is no such a video!", "Video removed successfully!"};
-			if ( error != null) {
+			if ( session().containsKey( "curAddRemoveError") ) {
+				String error = session().get( "curAddRemoveError");
 				if ( error.length() == 6 ) {
 					if ( error.substring( 0,5).equals( "error") ) {
 						int num = Integer.parseInt( error.substring(5) ) - 1;
 						if ( num == 0 || num == 4) {
 							messages.put( "uploadSuccess", errors[num]);
+							session().remove( "curAddRemoveError");
 						}
 						else {
 							messages.put( "uploadError", errors[num]);
+							session().remove( "curAddRemoveError");
 						}
 					}
 				}
 			}
-			return ok( mainMenu.render( fetched, Video.all( fetched), form( VideoUpload.class), messages ) );
+			return ok( mainMenu.render( fetched, Video.all( fetched), form( VideoUpload.class), messages, form( Search.class) ) );
 		}
 		else {
 			return redirect( routes.Application.login() );
@@ -156,14 +180,17 @@ public class Application extends Controller {
 					String uploadPath = Play.application().configuration().getString( "upload.path");
 					finalUpload.renameTo( new File( uploadPath, videoSaved + "." + extension ) );
 					System.out.println( "Absolute path = " + finalUpload.getAbsolutePath() );
-					return redirect( routes.Application.mainMenu( "error1") );
+					session().put( "curAddRemoveError", "error1");
+					return redirect( routes.Application.mainMenu() );
 				}
 				else {
-					return redirect( routes.Application.mainMenu( "error2") );
+					session().put( "curAddRemoveError", "error2");
+					return redirect( routes.Application.mainMenu() );
 				}
 			}
 			else {
-				return redirect( routes.Application.mainMenu( "error3") );
+				session().put( "curAddRemoveError", "error3");
+				return redirect( routes.Application.mainMenu() );
 			}
 		}
 		else {
@@ -177,20 +204,22 @@ public class Application extends Controller {
 		if ( Video.remove( id, user) ) {
 			File videoFile = new File( Play.application().configuration().getString( "upload.path"), id + "." + ext);
 			if ( videoFile.delete() ) {
-				return redirect( routes.Application.mainMenu( "error5") );
+				session().put( "curAddRemoveError", "error5");
+				return redirect( routes.Application.mainMenu() );
 			}
 			else {
-				return redirect( routes.Application.mainMenu( "error4") );
+				session().put( "curAddRemoveError", "error4");
+				return redirect( routes.Application.mainMenu() );
 			}
 		}
 		else {
-			return redirect( routes.Application.mainMenu( "error4") );
+			return redirect( routes.Application.mainMenu() );
 		}
 	}
 	
 	public static Result registerMenu() {
 		if ( session().containsKey( "nickName") ) {
-			return redirect( routes.Application.mainMenuX() );
+			return redirect( routes.Application.mainMenu() );
 		}
 		else {
 			return ok( registrationForm.render( form( UserRegistration.class) ) );
@@ -274,6 +303,19 @@ public class Application extends Controller {
 			}
 			else {
 				return "Your name should have at least 2 characters!";
+			}
+		}
+	}
+	
+	public static class Search {
+		public String phrase;
+		
+		public String validate() {
+			if ( phrase.length() > 0) {
+				return null;
+			}
+			else {
+				return "Please enter a non-empty phrase!";
 			}
 		}
 	}

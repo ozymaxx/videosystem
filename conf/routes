@@ -7,15 +7,18 @@ GET     /                           controllers.Application.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET		/docs/*file					controllers.Assets.at(path="/docs", file)
 
 GET		/login						controllers.Application.login()
 POST 	/login						controllers.Application.authenticate()
 
 GET 	/logout						controllers.Application.logout()
 
-GET		/main/:error				controllers.Application.mainMenu( error: String)
-GET		/main						controllers.Application.mainMenuX()
+GET		/main						controllers.Application.mainMenu()
 POST 	/main						controllers.Application.addVideo()
+
+GET		/search						controllers.Application.searchScreen()
+POST	/search						controllers.Application.search()
 
 GET		/edit_profile				controllers.Application.editProfile()
 POST	/edit_profile				controllers.Application.commitProfileChanges()

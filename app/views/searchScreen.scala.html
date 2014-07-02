@@ -1,4 +1,4 @@
-@( user: User, videos: List[Video], uploadForm: Form[Application.VideoUpload], messages: Map[String, String], searchForm: Form[Application.Search])
+@( user: User, videos: List[Video], searchedBefore: Boolean, form: Form[Application.Search])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +6,7 @@
 		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
 		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
 		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
-		<title>@user.name's Video Profile</title>
+		<title>@user.name's Video Profile - Search</title>
 		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
 	</head>
 	<nav class="navbar navbar-default" role="navigation">
@@ -32,10 +32,10 @@
 						<a href="" class="dropdown-toggle" data-toggle="dropdown">Me <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="edit_profile">Edit My Profile</a></li>
-							<li><a href="main">See My Videos&nbsp;<span class="badge">@videos.length</span></a></li>
+							<li><a href="main">See My Videos</a></li>
 						</ul>
 					</li>
-					<li><a href="" data-toggle="modal" data-target="#video-upload">Upload Video...</a></li>
+					<li><a href="main">Back to Main Menu</a></li>
 					<li><a href="logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Log Out</a></li>
 				</ul>
 				<div class="navbar-form navbar-right" role="search">
@@ -54,39 +54,19 @@
 		</div>
 	</nav>
 	<div class="container">
-		<div class="modal fade" id="video-upload" role="dialog" aria-labelledby="video-upload-label" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					@helper.form( action = routes.Application.addVideo, 'enctype -> "multipart/form-data") {
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: black;">&times;</button>
-							<h4 class="modal-title" id="video-upload-label">Upload Video...</h4>
-						</div>
-						<div class="modal-body">
-							<input type="file" name="videoFile" /><br />
-							<input type="text" class="form-control" name="header" placeholder="Enter a header..." /><br />
-						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-open"></span>&nbsp;Upload</button>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
 		@if( videos.isEmpty() ) {
-			<div class="alert alert-info">There is no video you uploaded.</div>
+			@if( searchedBefore) {
+				<div class="alert alert-info">No results</div>
+			}
+			@if( !searchedBefore) {
+				<div class="alert alert-info">Please enter your phrase on the right-top text field.</div>
+			}
 		}
-		@if( messages.contains( "uploadError") ) {
-			<div class="alert alert-danger">@messages.get( "uploadError")</div>
+		@if( searchedBefore) {
+			<div class="alert alert-info">Search results&nbsp;<span class="badge">@videos.length</span></div>
 		}
-		@if( messages.contains( "uploadSuccess") ) {
-			<div class="alert alert-success">@messages.get( "uploadSuccess")</div>
-		}
-		@if( messages.contains( "removeError") ) {
-			<div class="alert alert-danger">@messages.get( "removeError")</div>
-		}
-		@if( messages.contains( "removeSuccess") ) {
-			<div class="alert alert-danger">@messages.get( "removeSuccess")</div>
+		@if( form.hasGlobalErrors) {
+			<div class="alert alert-danger">@form.globalError.message</div>					
 		}
 		@for( (video, col) <- videos.zipWithIndex) {
 			@if( col > 0 && col % 3 == 0) {
