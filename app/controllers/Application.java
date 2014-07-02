@@ -132,13 +132,13 @@ public class Application extends Controller {
 		if ( session().containsKey( "nickName") ) {
 			User fetched = User.fetchUser( session().get( "nickName") );
 			HashMap<String, String> messages = new HashMap<String, String>();
-			String[] errors = { "Video is successfully uploaded!", "Error saving content, please contact the admin.", "The file is not available!", "There is no such a video!", "Video removed successfully!"};
+			String[] errors = { "Video is successfully uploaded!", "Error saving content, please contact the admin.", "The file is not available!", "There is no such a video!", "Video removed successfully!", "Error converting video, please contact the administrator.", "Video successfully converted!"};
 			if ( session().containsKey( "curAddRemoveError") ) {
 				String error = session().get( "curAddRemoveError");
 				if ( error.length() == 6 ) {
 					if ( error.substring( 0,5).equals( "error") ) {
 						int num = Integer.parseInt( error.substring(5) ) - 1;
-						if ( num == 0 || num == 4) {
+						if ( num == 0 || num == 4 || num == 6) {
 							messages.put( "uploadSuccess", errors[num]);
 							session().remove( "curAddRemoveError");
 						}
@@ -214,6 +214,25 @@ public class Application extends Controller {
 		}
 		else {
 			return redirect( routes.Application.mainMenu() );
+		}
+	}
+	
+	public static Result convertVideo( String id, String newFormat) {
+		if ( session().containsKey( "nickName") ) {
+			User user = User.fetchUser( session().get( "nickName") );
+			Video check = Video.getVideo( id, user);
+			if ( check != null) {
+				// conversion process goes here...
+				session().put( "curAddRemoveError", "error7");
+				return redirect( routes.Application.mainMenu() );
+			}
+			else {
+				session().put( "curAddRemoveError", "error6");
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
 		}
 	}
 	

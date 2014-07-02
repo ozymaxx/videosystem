@@ -29,3 +29,5 @@ GET		/remove/:id					controllers.Application.removeVideo( id: String)
 
 GET		/register					controllers.Application.registerMenu()
 POST	/register					controllers.Application.registerUser()
+
+GET		/convert/:format/:id		controllers.Application.convertVideo( id: String, format: String)
