@@ -1,0 +1,38 @@
+@( user: User, form: Form[Application.ProfileEdition])
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
+		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
+		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
+		<title>Videosystem Administration - Edit User Info - @user.name</title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<body>
+		<div class="container">
+			@if( form.hasGlobalErrors) {
+				<div class="panel panel-danger" style="width: 400px; margin: auto; margin-top: 200px;">
+				<div class="panel-heading"><span class="glyphicon glyphicon-user"></span>&nbsp;@form.globalError.message</div>
+			}
+			@if( !( form.hasGlobalErrors) ) {
+				<div class="panel panel-primary" style="width: 400px; margin: auto; margin-top: 200px;">
+				<div class="panel-heading"><span class="glyphicon glyphicon-user"></span>&nbsp;Account Information Change - @user.nickName (@user.name)</div>
+			}
+				<div class="panel-body">
+					@helper.form( routes.Application.changeUser) {
+						<form>
+							<div class="alert alert-info">When the profile change is successful, you will be redirected to the users administration page.</div>
+							<input type="hidden" name ="nickName" value="@user.nickName" /><br />
+							<input type="text" name="newName" class="form-control" value="@user.name" placeholder="New Name" /><br />
+							<input type="password" name="newPwd1" class="form-control" placeholder="Password" /><br />
+							<input type="password" name="newPwd2" class="form-control" placeholder="Password (type again)" /><br />
+							<button type="submit" class="btn btn-primary btn-lg btn-block">Change Info</button>
+							<a class="btn btn-link" href="main">Back To Users Administration Menu</a>
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

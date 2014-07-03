@@ -179,7 +179,6 @@ public class Application extends Controller {
 					File finalUpload = videoFile.getFile();
 					String uploadPath = Play.application().configuration().getString( "upload.path");
 					finalUpload.renameTo( new File( uploadPath, videoSaved + "." + extension ) );
-					System.out.println( "Absolute path = " + finalUpload.getAbsolutePath() );
 					session().put( "curAddRemoveError", "error1");
 					return redirect( routes.Application.mainMenu() );
 				}
@@ -255,6 +254,122 @@ public class Application extends Controller {
 		}
 	}
 	
+	public static Result adminUsers() {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User admin = User.fetchUser( session().get( "nickName") );
+				HashMap<String, String> messages = new HashMap<String, String>();
+				String[] errors = { "User info successfully changed!", "Error removing user, please contact the admin.", "User successfully removed!"};
+				if ( session().containsKey( "adminErrors") ) {
+					String error = session().get( "adminErrors");
+					if ( error.length() == 6 ) {
+						if ( error.substring( 0,5).equals( "error") ) {
+							int num = Integer.parseInt( error.substring(5) ) - 1;
+							if ( num == 0 || num == 2) {
+								messages.put( "adminSuccess", errors[num]);
+								session().remove( "adminErrors");
+							}
+							else {
+								messages.put( "adminError", errors[num]);
+								session().remove( "adminErrors");
+							}
+						}
+					}
+				}
+				return ok( usersAdmin.render( User.all(), messages, Video.all( User.fetchUser( session().get( "nickName") ) ).size(), admin) );
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result editUser( String id) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User toBeEdited = User.getUserInfo( id);
+				if ( toBeEdited != null) {
+					if ( !( session().containsKey( "userToBeEdited") ) ) {
+						session().put( "userToBeEdited", toBeEdited.nickName);
+					}
+					return ok( userEdition.render( toBeEdited, form( ProfileEdition.class) ) );
+				}
+				else {
+					return redirect( routes.Application.adminUsers() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result changeUser() {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				Form<ProfileEdition> changeForm = form( ProfileEdition.class).bindFromRequest();
+				String nickEdited = session().get( "userToBeEdited");
+				session().remove( "userToBeEdited");
+				if ( nickEdited.equals( changeForm.field( "nickName").value() ) ) {
+					User toBeEdited = User.fetchUser( changeForm.field( "nickName").value() );
+					if ( changeForm.hasErrors() ) {
+						return badRequest( userEdition.render( toBeEdited, changeForm) );
+					}
+					else {
+						session().put( "adminErrors", "error1");
+						return redirect( routes.Application.adminUsers() );
+					}
+				}
+				else {
+					return redirect( routes.Application.adminUsers() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result removeUser( String id) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User deleted = User.getUserInfo( id);
+				if ( !( deleted.nickName.equals( "admin") ) ) {
+					if ( User.delete( id) ) {
+						session().put( "adminErrors", "error3");
+						return redirect( routes.Application.adminUsers() );
+					}
+					else {
+						session().put( "adminErrors", "error2");
+						return redirect( routes.Application.adminUsers() );
+					}
+				}
+				else {
+					return redirect( routes.Application.adminUsers() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result adminVideos() {
+		return redirect( routes.Application.mainMenu() );
+	}
+	
 	public static class UserLogin {
 		public String nick;
 		public String pwd;
@@ -301,7 +416,6 @@ public class Application extends Controller {
 		public String newPwd2;
 		
 		public String validate() {
-			System.out.println( newPwd1);
 			if ( newName.length() >= 2) {
 				if ( newPwd1.equals( newPwd2) ) {
 					if ( newPwd1.length() < 6) {

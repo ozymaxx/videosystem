@@ -31,3 +31,12 @@ GET		/register					controllers.Application.registerMenu()
 POST	/register					controllers.Application.registerUser()
 
 GET		/convert/:format/:id		controllers.Application.convertVideo( id: String, format: String)
+
+GET		/admin/users				controllers.Application.adminUsers()
+
+GET		/admin/edit_user/:id		controllers.Application.editUser( id: String)
+POST	/admin/edit_user			controllers.Application.changeUser()
+
+GET		/admin/remove_user/:id		controllers.Application.removeUser( id: String)
+
+GET		/admin/videos				controllers.Application.adminVideos()

@@ -61,10 +61,14 @@ public class User {
 		}
 	}
 	
-	public static void delete( String id) {
+	public static boolean delete( String id) {
 		User user = User.collection.findOneById( id);
-		if ( user != null) {
+		if ( user != null && !( user.nickName.equals( "admin") ) ) {
 			User.collection.remove( user);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	
@@ -98,6 +102,10 @@ public class User {
 		else {
 			return false;
 		}
+	}
+	
+	public static User getUserInfo( String id) {
+		return User.collection.findOneById( id);
 	}
 	
 	public static void removeAll() {

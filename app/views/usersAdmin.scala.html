@@ -1,0 +1,65 @@
+@( users: List[User], messages: Map[String, String], totalVideos: Int, admin: User)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
+		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
+		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
+		<title>Videosystem Administration - Users</title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#video-system-navbar-display">
+					<span class="sr-only">Toggle navigation</span>
+				</button>
+				<a class="navbar-brand" href="main">Videosystem</a>
+			</div>
+			<div class="collapse navbar-collapse" id="video-system-navbar-display">
+				<ul class="nav navbar-nav">
+					@if( admin.nickName == "admin") {
+						<li class="dropdown">
+							<a href="" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="/admin/users">See Users&nbsp;<span class="badge">@users.length</span></a></li>
+								<li><a href="/admin/videos">See All Videos</a></li>
+							</ul>
+						</li>
+					}
+					<li class="dropdown">
+						<a href="" class="dropdown-toggle" data-toggle="dropdown">Me <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/edit_profile">Edit My Profile</a></li>
+							<li><a href="/main">See My Videos&nbsp;<span class="badge">@totalVideos</span></a></li>
+						</ul>
+					</li>
+					<li><a href="/main">Back to Main Menu</a></li>
+					<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Log Out</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		@if( users.length == 1 ) {
+			<div class="alert alert-info">There is no user you uploaded.</div>
+		}
+		@if( messages.contains( "adminError") ) {
+			<div class="alert alert-danger">@messages.get( "adminError")</div>
+		}
+		@if( messages.contains( "adminSuccess") ) {
+			<div class="alert alert-success">@messages.get( "adminSuccess")</div>
+		}
+		@if( users.length > 1) {
+			<table class="table table-hover">
+				<th>nick_name</th><th>Name</th><th>Actions</th>
+				@for( (user, col) <- users.zipWithIndex) {
+					<tr>
+						<td>@user.nickName</td><td>@user.name</td><td>@if( user.nickName != "admin") {<a class="btn btn-danger" href="/admin/remove_user/@user.id"><span class="glyphicon glyphicon-remove"></span>&nbsp;Remove</a>&nbsp;}<a class="btn btn-warning" href="/admin/edit_user/@user.id"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit</a></td>
+					</tr>
+				}
+			</table>
+		}
+	</div>
+</html>
