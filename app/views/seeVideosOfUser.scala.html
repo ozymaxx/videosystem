@@ -1,4 +1,4 @@
-@( user: User, videos: List[Video], messages: Map[String, String], searchForm: Form[Application.Search], total: Int)
+@( admin: User, videos: List[Video], user: User, searchForm: Form[Application.Search], total: Int, totalAdmin: Int)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +6,7 @@
 		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
 		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
 		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
-		<title>@user.name's Video Profile</title>
+		<title>Videosystem Administration - @user.nickName's Videos</title>
 		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
 	</head>
 	<nav class="navbar navbar-default" role="navigation">
@@ -19,30 +19,30 @@
 			</div>
 			<div class="collapse navbar-collapse" id="video-system-navbar-display">
 				<ul class="nav navbar-nav">
-					@if( user.nickName == "admin") {
+					@if( admin.nickName == "admin") {
 						<li class="dropdown">
 							<a href="" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><a href="/admin/users">See Users</a></li>
-								<li><a href="/admin/videos">See All Videos&nbsp;<span class="badge">@videos.length</span></a></li>
+								<li><a href="/admin/videos">See All Videos&nbsp;<span class="badge">@total</span></a></li>
 							</ul>
 						</li>
 					}
 					<li class="dropdown">
 						<a href="" class="dropdown-toggle" data-toggle="dropdown">Me <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="edit_profile">Edit My Profile</a></li>
-							<li><a href="main">See My Videos&nbsp;<span class="badge">@total</span></a></li>
+							<li><a href="/edit_profile">Edit My Profile</a></li>
+							<li><a href="/main">See My Videos&nbsp;<span class="badge">@totalAdmin</span></a></li>
 						</ul>
 					</li>
-					<li><a href="/main">Back to Main Menu</a></li>
+					<li><a href="/admin/users">Back to Users List</a></li>
 					<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Log Out</a></li>
 				</ul>
 				<div class="navbar-form navbar-right" role="search">
-					@helper.form( routes.Application.searchAdmin) {
+					@helper.form( routes.Application.searchVideosOf( user.id) ) {
 						<div class="form-group">
 							<div class="input-group">
-								<input type="text" class="form-control" name="phrase" placeholder="Enter search keywords..." />
+								<input type="text" class="form-control" name="phrase" placeholder="Search @user.nickName's videos..." />
 								<span class="input-group-btn">
 									<button type="submit" class="btn btn-primary">Go</button>
 								</span>
@@ -54,14 +54,8 @@
 		</div>
 	</nav>
 	<div class="container">
-		@if( videos.isEmpty() ) {
-			<div class="alert alert-info">There is no video uploaded.</div>
-		}
-		@if( messages.contains( "avError") ) {
-			<div class="alert alert-danger">@messages.get( "avError")</div>
-		}
-		@if( messages.contains( "avSuccess") ) {
-			<div class="alert alert-success">@messages.get( "avSuccess")</div>
+		@if( videos.length == 0) {
+			<div class="alert alert-info">There is no video of @user.nickName.</div>
 		}
 		@for( (video, col) <- videos.zipWithIndex) {
 			@if( col > 0 && col % 3 == 0) {
@@ -70,11 +64,11 @@
 			<div class="col-md-4">
 				<ul class="media-list">
 					<li class="media">
-						<a class="pull-left" href="/watch/@video.id">
+						<a class="pull-left" href="watch/@video.id">
 							<img class="media-object" src="res/index.svg" alt="..." />
 						</a>
 						<div class="media-body">
-							<h4 class="media-heading">@video.header <span class="label label-primary">@video.ext.toUpperCase</span>&nbsp;<span class="label label-success"><span class="glyphicon glyphicon-user"></span>&nbsp;@video.publisher.nickName</span></h4>
+							<h4 class="media-heading">@video.header <span class="label label-primary">@video.ext.toUpperCase</span></h4>
 							<a class="btn btn-link btn-xs" href="/admin/videos/remove/@video.id"><span class="glyphicon glyphicon-remove"></span>&nbsp;Remove</a><br />
 							<div class="btn-group">
 								<a type="button" class="btn btn-link btn-xs"><span class="glyphicon glyphicon-pencil"></span> To...</a>

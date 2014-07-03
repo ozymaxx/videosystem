@@ -36,6 +36,16 @@ public class User {
 		return User.collection.find().toArray();
 	}
 	
+	public static boolean existsID( String id) {
+		User video = User.collection.findOneById( id);
+		if ( video != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	public static String create( User user) {
 		BasicDBObject query = new BasicDBObject( "nickName", user.nickName);
 		if ( User.collection.find( query).toArray().size() == 0 ) {

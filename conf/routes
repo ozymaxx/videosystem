@@ -40,3 +40,13 @@ POST	/admin/edit_user			controllers.Application.changeUser()
 GET		/admin/remove_user/:id		controllers.Application.removeUser( id: String)
 
 GET		/admin/videos				controllers.Application.adminVideos()
+
+GET		/admin/videos/ofuser/:id	controllers.Application.seeVideosOf( id: String)
+POST	/admin/videos/ofuser/:id	controllers.Application.searchVideosOf( id: String)
+
+GET		/admin/videos/search		controllers.Application.searchScreenAdmin()
+POST	/admin/videos/search		controllers.Application.searchAdmin()
+
+GET		/admin/videos/remove/:id	controllers.Application.removeVideoAdmin( id: String)
+
+GET		/admin/videos/conv/:f/:id	controllers.Application.convertVideoAdmin( id: String, f: String)

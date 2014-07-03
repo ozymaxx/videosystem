@@ -40,6 +40,12 @@ public class Video {
 		return Video.collection.find( query).toArray();
 	}
 	
+	public static List<Video> all( String userID) {
+		User user = User.getUserInfo( userID);
+		BasicDBObject query = new BasicDBObject( "publisher", user);
+		return Video.collection.find( query).toArray();
+	}
+	
 	public static List<Video> findBetween( int start, int end, User publisher) {
 		List<Video> results;
 		List<Video> allVideos;
@@ -118,33 +124,50 @@ public class Video {
 	}
 	
 	public static List<Video> search( String phrase, User publisher) {
-		BasicDBObject query = new BasicDBObject( "$text", new BasicDBObject( "$search", phrase) ).append( "publisher", publisher);
+		BasicDBObject query = new BasicDBObject( "$text", new BasicDBObject( "$search", phrase) );
+		if ( publisher != null) {
+			query = query.append( "publisher", publisher);
+		}
 		List<Video> results = Video.collection.find( query).toArray();
 		return results;
 	}
 	
 	public static boolean remove( String id, User publisher) {
 		Video check = Video.collection.findOneById( id);
-		if ( !( check.publisher.equals( publisher) ) ) {
-			return false;
-		}
-		else {
+		if ( publisher == null) {
 			Video.collection.removeById( id);
 			if ( all().size() == 0) {
 				Video.collection.ensureIndex( new BasicDBObject( "header", "text") );
 			}
 			return true;
 		}
+		else {
+			if ( !( check.publisher.equals( publisher) ) ) {
+				return false;
+			}
+			else {
+				Video.collection.removeById( id);
+				if ( all().size() == 0) {
+					Video.collection.ensureIndex( new BasicDBObject( "header", "text") );
+				}
+				return true;
+			}
+		}
 	}
 	
 	public static Video getVideo( String id, User publisher) {
 		Video check = Video.collection.findOneById( id);
 		if ( check != null) {
-			if ( check.publisher.equals( publisher) ) {
+			if ( publisher == null) {
 				return check;
 			}
 			else {
-				return null;
+				if ( check.publisher.equals( publisher) ) {
+					return check;
+				}
+				else {
+					return null;
+				}
 			}
 		}
 		else {

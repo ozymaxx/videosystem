@@ -56,7 +56,7 @@
 				<th>nick_name</th><th>Name</th><th>Actions</th>
 				@for( (user, col) <- users.zipWithIndex) {
 					<tr>
-						<td>@user.nickName</td><td>@user.name</td><td>@if( user.nickName != "admin") {<a class="btn btn-danger" href="/admin/remove_user/@user.id"><span class="glyphicon glyphicon-remove"></span>&nbsp;Remove</a>&nbsp;}<a class="btn btn-warning" href="/admin/edit_user/@user.id"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit</a></td>
+						<td>@user.nickName</td><td>@user.name</td><td>@if( user.nickName != "admin") {<a class="btn btn-danger" href="/admin/remove_user/@user.id"><span class="glyphicon glyphicon-remove"></span>&nbsp;Remove</a>&nbsp;}<a class="btn btn-warning" href="/admin/edit_user/@user.id"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit</a>&nbsp;<a class="btn btn-primary" href="/admin/videos/ofuser/@user.id"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;See Videos</a></td>
 					</tr>
 				}
 			</table>

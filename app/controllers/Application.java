@@ -198,21 +198,78 @@ public class Application extends Controller {
 	}
 	
 	public static Result removeVideo( String id) {
-		User user = User.fetchUser( session().get( "nickName") );
-		String ext = Video.getExtensionOf( id);
-		if ( Video.remove( id, user) ) {
-			File videoFile = new File( Play.application().configuration().getString( "upload.path"), id + "." + ext);
-			if ( videoFile.delete() ) {
-				session().put( "curAddRemoveError", "error5");
-				return redirect( routes.Application.mainMenu() );
+		if ( session().containsKey( "nickName") ) {
+			User user = User.fetchUser( session().get( "nickName") );
+			String ext = Video.getExtensionOf( id);
+			if ( Video.remove( id, user) ) {
+				File videoFile = new File( Play.application().configuration().getString( "upload.path"), id + "." + ext);
+				if ( videoFile.delete() ) {
+					session().put( "curAddRemoveError", "error5");
+					return redirect( routes.Application.mainMenu() );
+				}
+				else {
+					session().put( "curAddRemoveError", "error4");
+					return redirect( routes.Application.mainMenu() );
+				}
 			}
 			else {
-				session().put( "curAddRemoveError", "error4");
 				return redirect( routes.Application.mainMenu() );
 			}
 		}
 		else {
-			return redirect( routes.Application.mainMenu() );
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result removeVideoAdmin( String id) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				String ext = Video.getExtensionOf( id);
+				if ( Video.remove( id, null) ) {
+					File videoFile = new File( Play.application().configuration().getString( "upload.path"), id + "." + ext);
+					if ( videoFile.delete() ) {
+						session().put( "adminVideoError", "error1");
+						return redirect( routes.Application.adminVideos() );
+					}
+					else {
+						session().put( "adminVideoError", "error2");
+						return redirect( routes.Application.adminVideos() );
+					}
+				}
+				else {
+					return redirect( routes.Application.adminVideos() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result convertVideoAdmin( String id, String newFormat) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User user = User.fetchUser( session().get( "nickName") );
+				Video check = Video.getVideo( id, null);
+				if ( check != null) {
+					// conversion process goes here...
+					session().put( "adminVideoError", "error3");
+					return redirect( routes.Application.adminVideos() );
+				}
+				else {
+					session().put( "adminVideoError", "error4");
+					return redirect( routes.Application.adminVideos() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
 		}
 	}
 	
@@ -366,8 +423,116 @@ public class Application extends Controller {
 		}
 	}
 	
+	public static Result seeVideosOf( String id) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User admin = User.fetchUser( session().get( "nickName") );
+				return ok( seeVideosOfUser.render( admin, Video.all( id), User.getUserInfo( id), form( Search.class), Video.all().size(), Video.all( admin).size() ) );
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result searchScreenAdmin() {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				User admin = User.fetchUser( session().get( "nickName") );
+				return ok( searchScreenAdmin.render( admin, new ArrayList<Video>(), false, form( Search.class), Video.all().size(), Video.all( admin).size(), false ) );
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result searchVideosOf( String id) {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				if ( User.existsID( id) ) {
+					Form<Search> searchForm = form( Search.class).bindFromRequest();
+			
+					User searched = User.getUserInfo( id);
+					if ( searchForm.hasErrors() ) {
+						return badRequest( searchScreenAdmin.render( searched, new ArrayList<Video>(), true, searchForm, Video.all().size(), Video.all( User.fetchUser( session().get( "nickName") ) ).size(), true ) );
+					}
+					else {
+						return ok( searchScreenAdmin.render( searched, Video.search( searchForm.field( "phrase").value(), searched), true, searchForm, Video.all().size(), Video.all( User.fetchUser( session().get( "nickName") ) ).size(), true ) );
+					}
+				}
+				else {
+					return redirect( routes.Application.adminVideos() );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
+	public static Result searchAdmin() {
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				Form<Search> searchForm = form( Search.class).bindFromRequest();
+			
+				User admin = User.fetchUser( session().get( "nickName") );
+				if ( searchForm.hasErrors() ) {
+					return badRequest( searchScreenAdmin.render( admin, new ArrayList<Video>(), true, searchForm, Video.all().size(), Video.all( admin).size(), false ) );
+				}
+				else {
+					return ok( searchScreenAdmin.render( admin, Video.search( searchForm.field( "phrase").value(), null), true, searchForm, Video.all().size(), Video.all( admin).size(), false ) );
+				}
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
+	}
+	
 	public static Result adminVideos() {
-		return redirect( routes.Application.mainMenu() );
+		if ( session().containsKey( "nickName") ) {
+			if ( session().get( "nickName").equals( "admin") ) {
+				HashMap<String, String> messages = new HashMap<String, String>();
+				String[] errors = { "Video successfully deleted!", "Failure deleting video, please contact the administration.", "Conversion successful!", "Conversion failure, please contact the administration."};
+				if ( session().containsKey( "adminVideoError") ) {
+					String error = session().get( "adminVideoError");
+					if ( error.length() == 6 ) {
+						if ( error.substring( 0,5).equals( "error") ) {
+							int num = Integer.parseInt( error.substring(5) ) - 1;
+							if ( num == 0 || num == 2) {
+								messages.put( "avSuccess", errors[num]);
+								session().remove( "adminVideoError");
+							}
+							else {
+								messages.put( "avError", errors[num]);
+								session().remove( "adminVideoError");
+							}
+						}
+					}
+				}
+				User admin = User.fetchUser( session().get( "nickName") );
+				return ok( videosAdmin.render( admin, Video.all(), messages, form( Search.class), Video.all( admin).size() ) );
+			}
+			else {
+				return redirect( routes.Application.mainMenu() );
+			}
+		}
+		else {
+			return redirect( routes.Application.login() );
+		}
 	}
 	
 	public static class UserLogin {
