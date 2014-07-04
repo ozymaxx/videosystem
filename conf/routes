@@ -50,3 +50,6 @@ POST	/admin/videos/search		controllers.Application.searchAdmin()
 GET		/admin/videos/remove/:id	controllers.Application.removeVideoAdmin( id: String)
 
 GET		/admin/videos/conv/:f/:id	controllers.Application.convertVideoAdmin( id: String, f: String)
+
+GET		/admin_installation			controllers.Application.installAdmin()
+GET		/generate_admin				controllers.Application.generateAdmin()

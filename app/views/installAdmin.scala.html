@@ -1,0 +1,33 @@
+@( adminInstalled: Boolean, error: Boolean)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href='@routes.Assets.at( "/public", "stylesheets/bootstrap.min.css")' media="screen" />
+		<script src='@routes.Assets.at( "/public", "javascripts/jquery-1.9.0.min.js")'></script>
+		<script src='@routes.Assets.at( "/public", "javascripts/bootstrap.min.js")'></script>
+		<title></title>
+		<meta http-equiv="Content-Type" value="text/html; charset=utf-8;" />
+	</head>
+	<body>
+		<div class="container">
+			<div class="jumbotron" style="margin-top: 200px;">
+				@if( adminInstalled) {
+					<h1>Admin Generated <span class="glyphicon glyphicon-ok" style="color: green;"></span></h1>
+					<p>The top user is already generated.</p>
+					<p><a class="btn btn-primary btn-lg" href="/main">Go to System</a></p>
+				}
+				@if( !adminInstalled) {
+					@if( error) {
+						<div class="alert alert-danger">An error occured, please contact the administrator.</div>
+					}
+					<h1>Admin Generator <span class="glyphicon glyphicon-ok" style="color: green;"></span></h1>
+					<p>The top user is not generated, press Proceed button to generate the administrator user.</p>
+					<p>Default ogin credentials of admina after generation: NickName: <kbd>admin</kbd> Password: <kbd>admin</kbd></p>
+					<p>When creation successful, you will be directed to the login page.</p>
+					<p><a class="btn btn-primary btn-lg" href="/generate_admin">Generate</a></p>
+				}
+			</div>
+		</div>
+	</body>
+</html>

@@ -129,4 +129,13 @@ public class User {
 	public boolean equals( User u) {
 		return u.nickName.equals( nickName) && u.id.equals( id);
 	}
+	
+	public static boolean adminInstalled() {
+		BasicDBObject query = new BasicDBObject( "nickName", "admin");
+		return User.collection.find( query).toArray().size() == 1;
+	}
+	
+	public static String createAdmin() {
+		return create( "Videosystem Admin", "admin", "admin");
+	}
 }
